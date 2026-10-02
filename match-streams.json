@@ -4,224 +4,224 @@
       "id": "m1",
       "week": 1,
       "date": "2026-10-06",
-      "teamA": "dawn",
-      "teamB": "jade",
+      "teamA": "Airlangga",
+      "teamB": "Gajah Mada",
       "streamUrl": ""
     },
     {
       "id": "m2",
       "week": 1,
       "date": "2026-10-07",
-      "teamA": "solar",
-      "teamB": "storm",
+      "teamA": "Kalingga",
+      "teamB": "Sadewa",
       "streamUrl": ""
     },
     {
       "id": "m3",
       "week": 1,
       "date": "2026-10-08",
-      "teamA": "sky",
-      "teamB": "rift",
+      "teamA": "Samudera",
+      "teamB": "Warmadewa",
       "streamUrl": ""
     },
     {
       "id": "m4",
       "week": 2,
       "date": "2026-10-13",
-      "teamA": "lunar",
-      "teamB": "ember",
+      "teamA": "Padjadjaran",
+      "teamB": "Batavia",
       "streamUrl": ""
     },
     {
       "id": "m5",
       "week": 2,
       "date": "2026-10-14",
-      "teamA": "dawn",
-      "teamB": "storm",
+      "teamA": "Airlangga",
+      "teamB": "Sadewa",
       "streamUrl": ""
     },
     {
       "id": "m6",
       "week": 2,
       "date": "2026-10-15",
-      "teamA": "jade",
-      "teamB": "rift",
+      "teamA": "Gajah Mada",
+      "teamB": "Warmadewa",
       "streamUrl": ""
     },
     {
       "id": "m7",
       "week": 3,
       "date": "2026-10-20",
-      "teamA": "solar",
-      "teamB": "ember",
+      "teamA": "Kalingga",
+      "teamB": "Batavia",
       "streamUrl": ""
     },
     {
       "id": "m8",
       "week": 3,
       "date": "2026-10-21",
-      "teamA": "sky",
-      "teamB": "lunar",
+      "teamA": "Samudera",
+      "teamB": "Padjadjaran",
       "streamUrl": ""
     },
     {
       "id": "m9",
       "week": 3,
       "date": "2026-10-22",
-      "teamA": "dawn",
-      "teamB": "rift",
+      "teamA": "Airlangga",
+      "teamB": "Warmadewa",
       "streamUrl": ""
     },
     {
       "id": "m10",
       "week": 4,
       "date": "2026-10-27",
-      "teamA": "storm",
-      "teamB": "ember",
+      "teamA": "Sadewa",
+      "teamB": "Batavia",
       "streamUrl": ""
     },
     {
       "id": "m11",
       "week": 4,
       "date": "2026-10-28",
-      "teamA": "jade",
-      "teamB": "lunar",
+      "teamA": "Gajah Mada",
+      "teamB": "Padjadjaran",
       "streamUrl": ""
     },
     {
       "id": "m12",
       "week": 5,
       "date": "2026-11-03",
-      "teamA": "solar",
-      "teamB": "sky",
+      "teamA": "Kalingga",
+      "teamB": "Samudera",
       "streamUrl": ""
     },
     {
       "id": "m13",
       "week": 5,
       "date": "2026-11-04",
-      "teamA": "dawn",
-      "teamB": "ember",
+      "teamA": "Airlangga",
+      "teamB": "Batavia",
       "streamUrl": ""
     },
     {
       "id": "m14",
       "week": 5,
       "date": "2026-11-05",
-      "teamA": "rift",
-      "teamB": "lunar",
+      "teamA": "Warmadewa",
+      "teamB": "Padjadjaran",
       "streamUrl": ""
     },
     {
       "id": "m15",
       "week": 6,
       "date": "2026-11-10",
-      "teamA": "storm",
-      "teamB": "sky",
+      "teamA": "Sadewa",
+      "teamB": "Samudera",
       "streamUrl": ""
     },
     {
       "id": "m16",
       "week": 6,
       "date": "2026-11-11",
-      "teamA": "jade",
-      "teamB": "solar",
+      "teamA": "Gajah Mada",
+      "teamB": "Kalingga",
       "streamUrl": ""
     },
     {
       "id": "m17",
       "week": 6,
       "date": "2026-11-12",
-      "teamA": "dawn",
-      "teamB": "lunar",
+      "teamA": "Airlangga",
+      "teamB": "Padjadjaran",
       "streamUrl": ""
     },
     {
       "id": "m18",
       "week": 7,
       "date": "2026-11-17",
-      "teamA": "ember",
-      "teamB": "sky",
+      "teamA": "Batavia",
+      "teamB": "Samudera",
       "streamUrl": ""
     },
     {
       "id": "m19",
       "week": 7,
       "date": "2026-11-18",
-      "teamA": "rift",
-      "teamB": "solar",
+      "teamA": "Warmadewa",
+      "teamB": "Kalingga",
       "streamUrl": ""
     },
     {
       "id": "m20",
       "week": 8,
       "date": "2026-11-24",
-      "teamA": "storm",
-      "teamB": "jade",
+      "teamA": "Sadewa",
+      "teamB": "Gajah Mada",
       "streamUrl": ""
     },
     {
       "id": "m21",
       "week": 8,
       "date": "2026-11-25",
-      "teamA": "dawn",
-      "teamB": "sky",
+      "teamA": "Airlangga",
+      "teamB": "Samudera",
       "streamUrl": ""
     },
     {
       "id": "m22",
       "week": 8,
       "date": "2026-11-26",
-      "teamA": "lunar",
-      "teamB": "solar",
+      "teamA": "Padjadjaran",
+      "teamB": "Kalingga",
       "streamUrl": ""
     },
     {
       "id": "m23",
       "week": 9,
       "date": "2026-12-01",
-      "teamA": "ember",
-      "teamB": "jade",
+      "teamA": "Batavia",
+      "teamB": "Gajah Mada",
       "streamUrl": ""
     },
     {
       "id": "m24",
       "week": 9,
       "date": "2026-12-02",
-      "teamA": "rift",
-      "teamB": "storm",
+      "teamA": "Warmadewa",
+      "teamB": "Sadewa",
       "streamUrl": ""
     },
     {
       "id": "m25",
       "week": 9,
       "date": "2026-12-03",
-      "teamA": "dawn",
-      "teamB": "solar",
+      "teamA": "Airlangga",
+      "teamB": "Kalingga",
       "streamUrl": ""
     },
     {
       "id": "m26",
       "week": 10,
       "date": "2026-12-08",
-      "teamA": "sky",
-      "teamB": "jade",
+      "teamA": "Samudera",
+      "teamB": "Gajah Mada",
       "streamUrl": ""
     },
     {
       "id": "m27",
       "week": 10,
       "date": "2026-12-09",
-      "teamA": "lunar",
-      "teamB": "storm",
+      "teamA": "Padjadjaran",
+      "teamB": "Sadewa",
       "streamUrl": ""
     },
     {
       "id": "m28",
       "week": 10,
       "date": "2026-12-10",
-      "teamA": "ember",
-      "teamB": "rift",
+      "teamA": "Batavia",
+      "teamB": "Warmadewa",
       "streamUrl": ""
     }
   ]
