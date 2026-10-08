@@ -23,7 +23,7 @@
       "date": "2026-10-08",
       "teamA": "Samudera",
       "teamB": "Warmadewa",
-      "score": null
+      "score": [1,2]
     },
     {
       "id": "m4",
