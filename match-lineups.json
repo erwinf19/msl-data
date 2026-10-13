@@ -71,6 +71,29 @@
       "borrowedPlayerIdsB": [],
       "locked": true,
       "lockedAt": "2026-10-08T05:21:12.978Z"
+    },
+    {
+      "id": "m4",
+      "teamA": "Padjadjaran",
+      "teamB": "Batavia",
+      "playerIdsA": [
+        6,
+        9,
+        18,
+        27,
+        40
+      ],
+      "playerIdsB": [
+        5,
+        20,
+        28,
+        36,
+        42
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [],
+      "locked": true,
+      "lockedAt": "2026-10-13T05:19:12.221Z"
     }
   ]
 }
