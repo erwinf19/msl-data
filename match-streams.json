@@ -4,6 +4,7 @@
       "id": "m1",
       "week": 1,
       "date": "2026-10-06",
+      "time": "12:15",
       "teamA": "Airlangga",
       "teamB": "Gajah Mada",
       "streamUrl": "https://youtube.com/live/fVmFfPY6NHI?feature=share"
@@ -12,6 +13,7 @@
       "id": "m2",
       "week": 1,
       "date": "2026-10-07",
+      "time": "12:15",
       "teamA": "Kalingga",
       "teamB": "Sadewa",
       "streamUrl": "https://youtube.com/live/Pa5zugZisCQ?feature=share"
@@ -20,6 +22,7 @@
       "id": "m3",
       "week": 1,
       "date": "2026-10-08",
+      "time": "12:15",
       "teamA": "Samudera",
       "teamB": "Warmadewa",
       "streamUrl": "https://youtube.com/live/HYCYtJ88_wE?feature=share"
@@ -28,6 +31,7 @@
       "id": "m4",
       "week": 2,
       "date": "2026-10-13",
+      "time": "12:15",
       "teamA": "Padjadjaran",
       "teamB": "Batavia",
       "streamUrl": "https://youtube.com/live/XVxLuKHpPN8?feature=share"
@@ -36,6 +40,7 @@
       "id": "m5",
       "week": 2,
       "date": "2026-10-14",
+      "time": "16:45",
       "teamA": "Airlangga",
       "teamB": "Sadewa",
       "streamUrl": "https://youtube.com/live/Pb2L6JWMGsQ?feature=share"
@@ -44,6 +49,7 @@
       "id": "m6",
       "week": 2,
       "date": "2026-10-15",
+      "time": "12:15",
       "teamA": "Gajah Mada",
       "teamB": "Warmadewa",
       "streamUrl": ""
@@ -52,6 +58,7 @@
       "id": "m7",
       "week": 3,
       "date": "2026-10-20",
+      "time": "12:15",
       "teamA": "Kalingga",
       "teamB": "Batavia",
       "streamUrl": ""
@@ -60,6 +67,7 @@
       "id": "m8",
       "week": 3,
       "date": "2026-10-21",
+      "time": "12:15",
       "teamA": "Samudera",
       "teamB": "Padjadjaran",
       "streamUrl": ""
@@ -68,6 +76,7 @@
       "id": "m9",
       "week": 3,
       "date": "2026-10-22",
+      "time": "12:15",
       "teamA": "Airlangga",
       "teamB": "Warmadewa",
       "streamUrl": ""
@@ -76,6 +85,7 @@
       "id": "m10",
       "week": 4,
       "date": "2026-10-27",
+      "time": "12:15",
       "teamA": "Sadewa",
       "teamB": "Batavia",
       "streamUrl": ""
@@ -84,6 +94,7 @@
       "id": "m11",
       "week": 4,
       "date": "2026-10-28",
+      "time": "12:15",
       "teamA": "Gajah Mada",
       "teamB": "Padjadjaran",
       "streamUrl": ""
@@ -92,6 +103,7 @@
       "id": "m12",
       "week": 5,
       "date": "2026-11-03",
+      "time": "12:15",
       "teamA": "Kalingga",
       "teamB": "Samudera",
       "streamUrl": ""
@@ -100,6 +112,7 @@
       "id": "m13",
       "week": 5,
       "date": "2026-11-04",
+      "time": "12:15",
       "teamA": "Airlangga",
       "teamB": "Batavia",
       "streamUrl": ""
@@ -108,6 +121,7 @@
       "id": "m14",
       "week": 5,
       "date": "2026-11-05",
+      "time": "12:15",
       "teamA": "Warmadewa",
       "teamB": "Padjadjaran",
       "streamUrl": ""
@@ -116,6 +130,7 @@
       "id": "m15",
       "week": 6,
       "date": "2026-11-10",
+      "time": "12:15",
       "teamA": "Sadewa",
       "teamB": "Samudera",
       "streamUrl": ""
@@ -124,6 +139,7 @@
       "id": "m16",
       "week": 6,
       "date": "2026-11-11",
+      "time": "12:15",
       "teamA": "Gajah Mada",
       "teamB": "Kalingga",
       "streamUrl": ""
@@ -132,6 +148,7 @@
       "id": "m17",
       "week": 6,
       "date": "2026-11-12",
+      "time": "12:15",
       "teamA": "Airlangga",
       "teamB": "Padjadjaran",
       "streamUrl": ""
@@ -140,6 +157,7 @@
       "id": "m18",
       "week": 7,
       "date": "2026-11-17",
+      "time": "12:15",
       "teamA": "Batavia",
       "teamB": "Samudera",
       "streamUrl": ""
@@ -148,6 +166,7 @@
       "id": "m19",
       "week": 7,
       "date": "2026-11-18",
+      "time": "12:15",
       "teamA": "Warmadewa",
       "teamB": "Kalingga",
       "streamUrl": ""
@@ -156,6 +175,7 @@
       "id": "m20",
       "week": 8,
       "date": "2026-11-24",
+      "time": "12:15",
       "teamA": "Sadewa",
       "teamB": "Gajah Mada",
       "streamUrl": ""
@@ -164,6 +184,7 @@
       "id": "m21",
       "week": 8,
       "date": "2026-11-25",
+      "time": "12:15",
       "teamA": "Airlangga",
       "teamB": "Samudera",
       "streamUrl": ""
@@ -172,6 +193,7 @@
       "id": "m22",
       "week": 8,
       "date": "2026-11-26",
+      "time": "12:15",
       "teamA": "Padjadjaran",
       "teamB": "Kalingga",
       "streamUrl": ""
@@ -180,6 +202,7 @@
       "id": "m23",
       "week": 9,
       "date": "2026-12-01",
+      "time": "12:15",
       "teamA": "Batavia",
       "teamB": "Gajah Mada",
       "streamUrl": ""
@@ -188,6 +211,7 @@
       "id": "m24",
       "week": 9,
       "date": "2026-12-02",
+      "time": "12:15",
       "teamA": "Warmadewa",
       "teamB": "Sadewa",
       "streamUrl": ""
@@ -196,6 +220,7 @@
       "id": "m25",
       "week": 9,
       "date": "2026-12-03",
+      "time": "12:15",
       "teamA": "Airlangga",
       "teamB": "Kalingga",
       "streamUrl": ""
@@ -204,6 +229,7 @@
       "id": "m26",
       "week": 10,
       "date": "2026-12-08",
+      "time": "12:15",
       "teamA": "Samudera",
       "teamB": "Gajah Mada",
       "streamUrl": ""
@@ -212,6 +238,7 @@
       "id": "m27",
       "week": 10,
       "date": "2026-12-09",
+      "time": "12:15",
       "teamA": "Padjadjaran",
       "teamB": "Sadewa",
       "streamUrl": ""
@@ -220,6 +247,7 @@
       "id": "m28",
       "week": 10,
       "date": "2026-12-10",
+      "time": "12:15",
       "teamA": "Batavia",
       "teamB": "Warmadewa",
       "streamUrl": ""
