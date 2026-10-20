@@ -143,6 +143,29 @@
       ],
       "locked": true,
       "lockedAt": "2026-10-15T05:20:24.920Z"
+    },
+   {
+      "id": "m7",
+      "teamA": "Kalingga",
+      "teamB": "Batavia",
+      "playerIdsA": [
+        2,
+        10,
+        23,
+        37,
+        45
+      ],
+      "playerIdsB": [
+        5,
+        20,
+        28,
+        36,
+        42
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [],
+      "locked": true,
+      "lockedAt": "2026-10-20T05:17:19.390Z"
     }
   ]
 }
