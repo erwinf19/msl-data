@@ -166,6 +166,33 @@
       "borrowedPlayerIdsB": [],
       "locked": true,
       "lockedAt": "2026-10-20T05:17:19.390Z"
+    },
+    {
+      "id": "m8",
+      "teamA": "Samudera",
+      "teamB": "Padjadjaran",
+      "playerIdsA": [
+        7,
+        15,
+        31,
+        30,
+        42
+      ],
+      "playerIdsB": [
+        6,
+        9,
+        18,
+        40,
+        0
+      ],
+      "borrowedPlayerIdsA": [
+        42
+      ],
+      "borrowedPlayerIdsB": [
+        0
+      ],
+      "locked": true,
+      "lockedAt": "2026-10-21T09:49:37.861Z"
     }
   ]
 }
