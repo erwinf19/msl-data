@@ -71,7 +71,7 @@
       "date": "2026-10-22",
       "teamA": "Airlangga",
       "teamB": "Warmadewa",
-      "score": null
+      "score": [0,2]
     },
     {
       "id": "m10",
