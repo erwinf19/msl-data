@@ -239,6 +239,29 @@
       ],
       "locked": true,
       "lockedAt": "2026-10-27T09:44:59.793Z"
+    },
+    {
+      "id": "m11",
+      "teamA": "Gajah Mada",
+      "teamB": "Padjadjaran",
+      "playerIdsA": [
+        3,
+        8,
+        26,
+        41,
+        43
+      ],
+      "playerIdsB": [
+        6,
+        9,
+        18,
+        27,
+        40
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [],
+      "locked": true,
+      "lockedAt": "2026-10-28T05:17:51.724Z"
     }
   ]
 }
