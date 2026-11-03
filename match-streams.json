@@ -103,16 +103,16 @@
       "id": "m12",
       "week": 5,
       "date": "2026-11-03",
-      "time": "12:15",
+      "time": "16:45",
       "teamA": "Kalingga",
       "teamB": "Samudera",
-      "streamUrl": ""
+      "streamUrl": "https://youtube.com/live/eszr3KGWceE?feature=share"
     },
     {
       "id": "m13",
       "week": 5,
       "date": "2026-11-04",
-      "time": "12:15",
+      "time": "16:45",
       "teamA": "Airlangga",
       "teamB": "Batavia",
       "streamUrl": ""
