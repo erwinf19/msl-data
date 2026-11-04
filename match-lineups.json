@@ -262,6 +262,54 @@
       "borrowedPlayerIdsB": [],
       "locked": true,
       "lockedAt": "2026-10-28T05:17:51.724Z"
+    },
+    {
+      "id": "m12",
+      "teamA": "Kalingga",
+      "teamB": "Samudera",
+      "playerIdsA": [
+        2,
+        23,
+        24,
+        37,
+        45
+      ],
+      "playerIdsB": [
+        7,
+        21,
+        31,
+        30,
+        38
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [],
+      "locked": true,
+      "lockedAt": "2026-11-03T09:48:53.289Z"
+    },
+    {
+      "id": "m13",
+      "teamA": "Airlangga",
+      "teamB": "Batavia",
+      "playerIdsA": [
+        1,
+        13,
+        16,
+        29,
+        34
+      ],
+      "playerIdsB": [
+        5,
+        20,
+        36,
+        42,
+        7
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [
+        7
+      ],
+      "locked": true,
+      "lockedAt": "2026-11-04T09:48:15.971Z"
     }
   ]
 }
