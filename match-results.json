@@ -103,7 +103,7 @@
       "date": "2026-11-04",
       "teamA": "Airlangga",
       "teamB": "Batavia",
-      "score": null
+      "score": [1,2]
     },
     {
       "id": "m14",
