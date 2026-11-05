@@ -310,6 +310,29 @@
       ],
       "locked": true,
       "lockedAt": "2026-11-04T09:48:15.971Z"
+    },
+    {
+      "id": "m14",
+      "teamA": "Warmadewa",
+      "teamB": "Padjadjaran",
+      "playerIdsA": [
+        4,
+        12,
+        22,
+        32,
+        35
+      ],
+      "playerIdsB": [
+        6,
+        9,
+        18,
+        27,
+        40
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [],
+      "locked": true,
+      "lockedAt": "2026-11-05T05:19:43.334Z"
     }
   ]
 }
