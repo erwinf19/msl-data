@@ -1,0 +1,383 @@
+<title>Benchmark Refactor Expert 1G</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (max 1080px) — verdict strip, then stress chart, then tables, parity, method. */
+:root {
+  --bg: #f7f8fa; --surface: #ffffff; --ink: #14171c; --ink-2: #4a5160; --ink-3: #737a88;
+  --line: #e1e4ea; --line-2: #eef0f4;
+  --before: #eb6834; --after: #2a78d6;
+  --good: #1a7f4b; --good-bg: #e5f4ec; --warn: #9a5b00; --warn-bg: #fdf1dc; --bad: #b42318; --bad-bg: #fde8e6;
+  --font-body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --step--1: 0.8125rem; --step-0: 0.9375rem; --step-1: 1.125rem; --step-2: 1.375rem; --step-3: 1.875rem;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111317; --surface: #191c21; --ink: #eceef2; --ink-2: #b7bcc7; --ink-3: #8a909c;
+  --line: #2c3038; --line-2: #22252b; --before: #d95926; --after: #3987e5;
+  --good: #5fd39a; --good-bg: #13291f; --warn: #f0b75a; --warn-bg: #2b2213; --bad: #ff8a80; --bad-bg: #2f1715;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #111317; --surface: #191c21; --ink: #eceef2; --ink-2: #b7bcc7; --ink-3: #8a909c;
+  --line: #2c3038; --line-2: #22252b; --before: #d95926; --after: #3987e5;
+  --good: #5fd39a; --good-bg: #13291f; --warn: #f0b75a; --warn-bg: #2b2213; --bad: #ff8a80; --bad-bg: #2f1715;
+  color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: var(--step-0); line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 64px; }
+.wrap { max-width: 1080px; margin: 0 auto; display: grid; gap: 40px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.2; }
+h1 { font-size: var(--step-3); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: var(--step-2); font-weight: 600; }
+h3 { font-size: var(--step-1); font-weight: 600; }
+p { margin: 0; max-width: 72ch; }
+.eyebrow { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.muted { color: var(--ink-2); }
+.small { font-size: var(--step--1); }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+code { background: var(--line-2); padding: 1px 5px; border-radius: 4px; }
+section { display: grid; gap: 16px; min-width: 0; }
+header { display: grid; gap: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; background: var(--surface); }
+.key { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot.before { background: var(--before); } .dot.after { background: var(--after); }
+
+.verdict { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.verdict > div { background: var(--surface); padding: 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.verdict .what { font-size: var(--step--1); color: var(--ink-2); font-weight: 500; }
+.verdict .nums { font-family: var(--font-mono); font-variant-numeric: tabular-nums; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
+.verdict .from { color: var(--before); text-decoration: line-through; text-decoration-thickness: 1px; }
+.verdict .to { color: var(--ink); font-size: var(--step-2); font-weight: 500; }
+.verdict .x { font-size: var(--step--1); color: var(--ink-3); }
+@media (max-width: 760px) { .verdict { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: var(--step--1); background: transparent; color: var(--ink-2); border: 0; padding: 6px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+.seg button:focus-visible, summary:focus-visible { outline: 2px solid var(--after); outline-offset: 2px; }
+.chart { width: 100%; overflow-x: auto; }
+.chart svg { display: block; min-width: 640px; width: 100%; height: auto; }
+.chart text { fill: var(--ink-2); font-family: var(--font-body); font-size: 12px; }
+.chart .lbl { fill: var(--ink); font-size: 12.5px; }
+.chart .val { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-2); }
+.chart .fac { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-3); }
+.chart .grid { stroke: var(--line-2); stroke-width: 1; }
+.chart .limit { stroke: var(--bad); stroke-width: 1; stroke-dasharray: 3 3; }
+.chart .limit-t { fill: var(--bad); font-size: 11px; }
+.chart .conn { stroke: var(--line); stroke-width: 2; }
+.chart .m-before { fill: var(--before); stroke: var(--surface); stroke-width: 2; }
+.chart .m-after { fill: var(--after); stroke: var(--surface); stroke-width: 2; }
+.chart .hit { fill: transparent; }
+.chart .row:hover .hitbg { fill: var(--line-2); }
+.hitbg { fill: transparent; }
+.tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--surface); font-size: var(--step--1); padding: 8px 10px; border-radius: 6px; max-width: 280px; z-index: 5; line-height: 1.45; }
+.tip b { font-weight: 600; }
+
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+th, td { padding: 8px 12px; text-align: right; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; white-space: normal; min-width: 200px; }
+thead th { color: var(--ink-3); font-weight: 500; background: var(--surface); position: sticky; top: 0; }
+tbody tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--font-mono); }
+td.grp { color: var(--ink-3); font-weight: 500; text-align: left; background: var(--line-2); font-size: var(--step--1); letter-spacing: .03em; }
+.pill { display: inline-block; font-family: var(--font-body); font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 1px 8px; }
+.pill.good { color: var(--good); background: var(--good-bg); }
+.pill.warn { color: var(--warn); background: var(--warn-bg); }
+.pill.bad { color: var(--bad); background: var(--bad-bg); }
+.cols2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 760px) { .cols2 { grid-template-columns: minmax(0, 1fr); } }
+.note { border-left: 3px solid var(--line); padding: 2px 0 2px 14px; display: grid; gap: 6px; }
+.note.ok { border-left-color: var(--good); } .note.wn { border-left-color: var(--warn); }
+.glossary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 0; }
+.glossary > div { background: var(--surface); padding: 12px 16px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.glossary dt { font-weight: 600; font-size: var(--step--1); }
+.glossary dd { margin: 0; font-size: var(--step--1); color: var(--ink-2); }
+@media (max-width: 760px) { .glossary { grid-template-columns: minmax(0, 1fr); } }
+thead tr.top th { color: var(--ink); font-weight: 600; text-align: center; border-bottom: 1px solid var(--line); }
+thead tr.top th.before { color: var(--before); } thead tr.top th.after { color: var(--after); }
+th .sub { display: block; font-weight: 400; color: var(--ink-3); font-size: 11px; }
+td .sub { display: block; color: var(--ink-3); font-size: 11px; font-family: var(--font-body); }
+ul.clean { margin: 0; padding-left: 18px; display: grid; gap: 6px; max-width: 80ch; }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; }
+summary { cursor: pointer; font-weight: 600; }
+details > div { margin-top: 12px; display: grid; gap: 10px; }
+.schema { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-2); white-space: pre; overflow-x: auto; background: var(--line-2); border-radius: 8px; padding: 12px; }
+@media (prefers-reduced-motion: no-preference) { .chart circle { transition: r .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">t4 · 20261012-expert-refactor-summary-activity-data · stress test BE</div>
+    <h1>Benchmark refactor Expert 1G: sebelum vs sesudah</h1>
+    <p class="muted">Perbandingan <span class="key"><span class="dot before"></span><b>sebelum</b> (branch <code>main</code>)</span> dan <span class="key"><span class="dot after"></span><b>sesudah</b> (branch <code>develop</code>)</span> untuk <code>service-learning-catalog</code> dan <code>service-expert</code>. Kedua versi membaca database lokal yang sama, diisi data skema 10 fasilitator × 5 program × 100 aktivitas × 20 kelompok × 25 murid.</p>
+    <div class="chips">
+      <span class="chip">10 Nov 2026</span>
+      <span class="chip">LC main 88eaa492d · develop f28516c5e</span>
+      <span class="chip">expert main 6cb4baa · develop 2015b2a</span>
+      <span class="chip">Postgres 18 lokal · Apple M4 · 16 GB</span>
+    </div>
+  </header>
+
+  <section aria-labelledby="h-read">
+    <h2 id="h-read">Cara membaca angka di halaman ini</h2>
+    <div class="glossary">
+      <div><dt>Waktu respons</dt><dd>Lama dari request dikirim sampai jawaban diterima. Ditulis dalam <b>ms</b> (milidetik, 1.000 ms = 1 detik) atau <b>dtk</b> (detik).</dd></div>
+      <div><dt>Median (p50)</dt><dd>Waktu respons di tengah. Separuh request selesai lebih cepat dari angka ini, separuh lagi lebih lambat. "p" berarti <i>persentil</i>, bukan orang.</dd></div>
+      <div><dt>p95</dt><dd>95 dari 100 request selesai dalam waktu ini atau lebih cepat. Angka ini menunjukkan pengalaman pengguna yang paling lambat.</dd></div>
+      <div><dt>Bersamaan</dt><dd>Jumlah request yang dikirim pada saat yang sama, misalnya 50 fasilitator membuka daftar di detik yang sama. Request dibagi bergiliran ke 10 fasilitator.</dd></div>
+      <div><dt>Lebih cepat (×)</dt><dd>Median sebelum dibagi median sesudah. 200× berarti versi sesudah 200 kali lebih cepat.</dd></div>
+      <div><dt>&gt; 25 dtk</dt><dd>Jumlah request yang butuh lebih dari 25 detik. BFF berhenti menunggu LC setelah 25 detik, jadi di produksi request ini gagal (Read Timeout).</dd></div>
+      <div><dt>Ditolak antrean</dt><dd>Request Daftar Peserta yang ditolak LC setelah antre 10 detik karena 4 slot query Peserta sedang penuh. Ini pengaman supaya DB tidak kehabisan koneksi.</dd></div>
+      <div><dt>Sebelum / sesudah</dt><dd><span class="key"><span class="dot before"></span><b>Sebelum</b></span> = branch <code>main</code> (belum ada refactor). <span class="key"><span class="dot after"></span><b>Sesudah</b></span> = branch <code>develop</code> (refactor 1G).</dd></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-verdict">
+    <h2 id="h-verdict">Hasil saat 50 request bersamaan</h2>
+    <p class="muted">Median waktu respons LC (gRPC) di concurrency 50, dengan 10 fasilitator bergantian. Batas fetch BFF adalah 25 detik. Di versi sebelum, setiap request Penilaian, Presensi, dan cek akses melewati batas itu, sehingga di produksi akan menjadi Read Timeout.</p>
+    <div class="verdict" id="verdict"></div>
+  </section>
+
+  <section aria-labelledby="h-chart">
+    <h2 id="h-chart">Waktu respons LC per skenario</h2>
+    <div class="panel">
+      <div class="toolbar">
+        <div class="chips">
+          <span class="key small"><span class="dot before"></span>Sebelum (main)</span>
+          <span class="key small"><span class="dot after"></span>Sesudah (develop)</span>
+          <span class="small muted">titik = median waktu respons · sumbu mendatar skala log (tiap garis 10× lipat) · angka di kanan = berapa kali lebih cepat</span>
+        </div>
+        <div class="seg" role="group" aria-label="Jumlah request bersamaan" id="conc">
+          <button type="button" data-c="1" aria-pressed="false">1 request</button>
+          <button type="button" data-c="10" aria-pressed="false">10 bersamaan</button>
+          <button type="button" data-c="50" aria-pressed="true">50 bersamaan</button>
+        </div>
+      </div>
+      <div class="chart" id="chart" role="img" aria-label="Grafik median waktu respons sebelum dan sesudah per skenario"></div>
+      <p class="small muted">Arahkan kursor ke baris untuk melihat p50, p95, dan maksimum. Angka lengkap ada di tabel di bawah.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-tbl">
+    <h2 id="h-tbl">Angka lengkap LC (gRPC)</h2>
+    <p class="muted">Waktu respons service-learning-catalog yang dipanggil langsung lewat gRPC, tanpa BFF. "1 bersamaan" = 10 fasilitator dipanggil satu per satu, 2 putaran (20 request). "10" dan "50 bersamaan" = 3 putaran, tiap putaran 10 atau 50 request sekaligus (30 dan 150 request). Satu panggilan pemanasan per skenario tidak dihitung.</p>
+    <div class="tbl"><table id="tbl-grpc"></table></div>
+  </section>
+
+  <section aria-labelledby="h-bff">
+    <h2 id="h-bff">End-to-end lewat BFF service-expert</h2>
+    <p class="muted">Request HTTP seperti yang dikirim app Expert ke <code>service-expert</code> lokal, yang lalu memanggil LC lokal. Token memakai satu akun fasilitator dev (fasilitator #1). Auth dan permission tetap dicek ke service-auth dev lewat VPN, jadi setiap request menanggung latensi jaringan yang sama di kedua versi.</p>
+    <div class="glossary">
+      <div><dt>Cache kosong</dt><dd>Cache Redis BFF dikosongkan sebelum setiap request, seperti fasilitator yang pertama kali membuka halaman. 5 request berurutan.</dd></div>
+      <div><dt>Cache terisi</dt><dd>Cache dibiarkan, seperti fasilitator yang membuka ulang halaman yang sama. 5 request berurutan.</dd></div>
+      <div><dt>10 tab sekaligus</dt><dd>10 request dikirim bersamaan oleh fasilitator yang sama (misalnya 10 tab atau perangkat), mulai dari cache kosong. 2 putaran.</dd></div>
+      <div><dt>Jumlah di daftar</dt><dd>Total yang dilaporkan halaman (aktivitas untuk Penilaian dan Presensi, peserta untuk Daftar Peserta). Contoh 201 → 121 = versi sebelum menampilkan 201 aktivitas, versi sesudah 121. Penyebabnya dijelaskan di bagian Penyesuaian hitungan.</dd></div>
+    </div>
+    <div class="tbl"><table id="tbl-bff"></table></div>
+  </section>
+
+  <section aria-labelledby="h-parity">
+    <h2 id="h-parity">Penyesuaian hitungan</h2>
+    <p class="muted">Selain kecepatan, isi jawaban dibandingkan per fasilitator (1 request, putaran pertama) dan per aktivitas (semua halaman untuk fasilitator #2). Tabel di bawah membandingkan <b>jumlah yang tampil di daftar</b>. Kolom selisih = sesudah dikurangi sebelum: <b>−79</b> berarti ada 79 aktivitas yang tampil di versi sebelum tapi tidak lagi tampil di versi sesudah.</p>
+    <div class="cols2">
+      <div class="note ok"><h3>Angka per kartu identik</h3><p class="small">Untuk setiap aktivitas yang muncul di kedua versi, jumlah peserta, mengumpulkan, dinilai, presensi terisi, jumlah kelompok, dan status kartu sama persis. Selisihnya 0 dari semua aktivitas Penilaian dan Presensi fasilitator #2, di rentang 1 dan 6 bulan dan di semua filter status.</p></div>
+      <div class="note wn"><h3>Total berkurang, sesuai rencana</h3><p class="small">Semua aktivitas yang hanya muncul di versi sebelum adalah <b>aktivitas berjadwal per kelompok yang jadwalnya di luar rentang tanggal</b>. Versi sebelum meloloskannya lewat <code>groupActivityDateBypassSQL</code>, dan versi sesudah menghapus bypass ini (SPEC-BE § 0.2, AC-B6/B7/B9). Kotak info (<code>mini_dashboard</code>, ringkasan presensi) sekarang selalu bernilai 0, sesuai AC-B1.</p></div>
+    </div>
+    <div class="tbl"><table id="tbl-parity"></table></div>
+    <p class="small muted">Fasilitator #2–#10 hanya memakai data bench, dan totalnya identik antar-fasilitator. Fasilitator #1 adalah akun dev asli yang juga punya data dev di DB lokal. Di data itu, 916 dari 3.846 aktivitas asli belum di-backfill (<code>activities.start_at</code> tidak sama dengan <code>activity_groups</code>). Inilah penyebab selisih kecil fasilitator #1 di Daftar Peserta (2.793 vs 2.796, dan 11 dari 12 tag sama). Di produksi, urutan rilis § 9.1 mewajibkan backfill sebelum 1G aktif.</p>
+  </section>
+
+  <section aria-labelledby="h-notes">
+    <h2 id="h-notes">Yang perlu diperhatikan</h2>
+    <ul class="clean">
+      <li><b>Daftar Peserta masih terberat.</b> Di 50 bersamaan, mediannya 5,8 detik (sebelumnya 17,5 detik) untuk rentang 6 bulan. LC membatasi query Peserta di 4 slot dengan antrean 10 detik. Dalam run ini 6 dari 150 request ditolak cepat dengan <code>Unavailable: participant query queue full</code>, alih-alih menahan koneksi DB yang juga dipakai Penilaian dan Presensi. Di BFF, single-flight dan cache 60 detik meredam lonjakan ini untuk fasilitator yang sama.</li>
+      <li><b>Cek akses 9 endpoint</b> diukur di level LC (<code>CheckActivityAssignment</code>). Versi sebelum mengambil sampai 1.000 aktivitas lalu mencari ID-nya, versi sesudah meminta 1 ID. Detail endpoint lewat BFF tidak diukur karena butuh data assessment service lain.</li>
+      <li><b>Angka absolut berbeda dari produksi.</b> Ini satu mesin lokal tanpa replika, Postgres dengan konfigurasi bawaan (shared_buffers 160 MB, work_mem 4 MB), dan DB 640 MB yang muat di memori. Yang bisa dibawa ke produksi adalah perbandingan relatif dan pola di bawah beban, bukan detiknya.</li>
+      <li><b>Nama peserta di BFF</b> diambil dari service-user dev. Murid bench tidak ada di sana, jadi kedua versi memakai jalur fallback yang sama.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h-method">
+    <h2 id="h-method">Data dan cara mengulang</h2>
+    <details>
+      <summary>Skema data bench</summary>
+      <div>
+        <div class="schema">10 fasilitator  (#1 = akun dev token BFF, #2–#10 sintetis)
+ └─ 5 program per fasilitator            → 50 program, status Aktif
+     └─ 100 aktivitas per program        → 5.000 aktivitas
+         ├─ content type: 25 Kuis&Tugas · 25 Refleksi · 25 Offline · 25 Live streaming
+         ├─ 35 berjadwal (jadwal di aktivitas)
+         ├─ 35 berjadwal per kelompok (tiap kelompok bergeser 6 jam)
+         ├─ 30 tanpa jadwal
+         └─ 20 kelompok × 25 murid       → 500 murid per program, 25.000 murid total
+ Jadwal: 15 Mei – 13 Des 2026 · jawaban/presensi hanya untuk aktivitas yang sudah lewat atau tanpa jadwal
+ Isian per aktivitas (id % 5): 0 = semua mengumpulkan & dinilai / semua hadir
+                               1 = 70% mengumpulkan, belum dinilai / presensi kosong
+                               2–4 = 70% mengumpulkan, ±separuh dinilai, ¼ diberi umpan balik / 60% hadir
+ Total: 100.000 baris activity_groups · 25.050 enrollment · 1.480.700 baris user_activity_records</div>
+        <p class="small muted">Jadwal tersimpan di <code>activities.start_at/end_at</code> dihitung dengan rumus yang sama seperti <code>migrations/backfill/backfill-activity-schedule.sql</code>. Semua baris bench memakai ID ≥ 10.000.000.</p>
+      </div>
+    </details>
+    <details>
+      <summary>Lingkungan dan langkah</summary>
+      <div>
+        <ul class="clean small">
+          <li>Binary dibangun dari worktree <code>origin/main</code> dan <code>origin/develop</code> dengan <code>GOWORK=off</code>, dan dijalankan bergantian (hanya satu versi aktif pada satu waktu).</li>
+          <li>Config dari Vault dev lewat proxy lokal. Proxy ini hanya mengganti DB LC ke <code>localhost/sid_lac_learning_catalog</code>, Redis dan NATS ke container lokal, serta alamat LC di BFF ke LC lokal. Tidak ada kode service yang diubah.</li>
+          <li>Redis lokal dikosongkan setiap kali ganti versi.</li>
+          <li>Skrip ada di folder fitur <code>bench/stress-main-vs-develop/</code>: <code>01-fixture.sql</code>, <code>99-cleanup.sql</code>, <code>grpcbench/</code> (meniru panggilan BFF per branch), <code>bffbench.py</code>, <code>analyze.py</code>, dan hasil mentah di <code>results/*.jsonl</code>.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+const DATA = {"grpc":{"grading_1m":{"label":"Daftar Penilaian \u00b7 1 bulan","1":{"main":{"n":20,"errors":0,"err_sample":null,"p50":1369.4054999999998,"p95":1568.9365500000001,"max":1580.898,"mean":1320.89555,"over_25s":0},"develop":{"n":20,"errors":0,"err_sample":null,"p50":7.7165,"p95":10.542850000000001,"max":12.953,"mean":8.19215,"over_25s":0}},"10":{"main":{"n":30,"errors":0,"err_sample":null,"p50":5730.9145,"p95":6009.4474,"max":6168.054,"mean":5628.3069,"over_25s":0},"develop":{"n":30,"errors":0,"err_sample":null,"p50":34.403499999999994,"p95":60.65585,"max":61.377,"mean":37.22026666666667,"over_25s":0}},"50":{"main":{"n":150,"errors":0,"err_sample":null,"p50":28701.116499999996,"p95":28952.3907,"max":28985.232,"mean":28655.206533333334,"over_25s":150},"develop":{"n":150,"errors":0,"err_sample":null,"p50":141.6595,"p95":178.65570000000002,"max":181.075,"mean":134.63458666666668,"over_25s":0}}},"grading_6m":{"label":"Daftar Penilaian \u00b7 6 bulan","1":{"main":{"n":20,"errors":0,"err_sample":null,"p50":1800.9895000000001,"p95":1943.5529,"max":2020.672,"mean":1815.76585,"over_25s":0},"develop":{"n":20,"errors":0,"err_sample":null,"p50":7.2325,"p95":8.1046,"max":8.116,"mean":7.36555,"over_25s":0}},"10":{"main":{"n":30,"errors":0,"err_sample":null,"p50":6736.0635,"p95":6972.03485,"max":7175.765,"mean":6574.067233333333,"over_25s":0},"develop":{"n":30,"errors":0,"err_sample":null,"p50":31.47,"p95":43.390299999999996,"max":44.273,"mean":30.249733333333335,"over_25s":0}},"50":{"main":{"n":150,"errors":0,"err_sample":null,"p50":34395.2065,"p95":34762.98395,"max":34799.36,"mean":34396.051126666665,"over_25s":150},"develop":{"n":150,"errors":0,"err_sample":null,"p50":172.34449999999998,"p95":199.53785000000002,"max":205.095,"mean":162.00448,"over_25s":0}}},"grading_6m_not_graded":{"label":"Daftar Penilaian \u00b7 6 bulan \u00b7 filter Belum Dinilai","1":{"main":{"n":20,"errors":0,"err_sample":null,"p50":2575.8115,"p95":2803.31625,"max":2821.713,"mean":2592.57065,"over_25s":0},"develop":{"n":20,"errors":0,"err_sample":null,"p50":9.865,"p95":11.60825,"max":11.822,"mean":10.095,"over_25s":0}},"10":{"main":{"n":30,"errors":0,"err_sample":null,"p50":10257.760999999999,"p95":10602.4632,"max":10809.574,"mean":10074.274166666666,"over_25s":0},"develop":{"n":30,"errors":0,"err_sample":null,"p50":39.936,"p95":44.27405,"max":44.606,"mean":35.91733333333333,"over_25s":0}},"50":{"main":{"n":150,"errors":0,"err_sample":null,"p50":51407.829,"p95":51818.7673,"max":51893.995,"mean":51432.00024666667,"over_25s":150},"develop":{"n":150,"errors":0,"err_sample":null,"p50":199.264,"p95":228.6364,"max":232.985,"mean":188.70914666666667,"over_25s":0}}},"grading_6m_in_progress":{"label":"Daftar Penilaian \u00b7 6 bulan \u00b7 filter Sedang Dinilai","1":{"main":{"n":20,"errors":0,"err_sample":null,"p50":2555.134,"p95":2618.2453,"max":2791.797,"mean":2561.88505,"over_25s":0},"develop":{"n":20,"errors":0,"err_sample":null,"p50":39.659499999999994,"p95":42.30295,"max":43.955,"mean":39.11035,"over_25s":0}},"10":{"main":{"n":30,"errors":0,"err_sample":null,"p50":10322.509,"p95":10422.4467,"max":11031.535,"mean":10013.074966666667,"over_25s":0},"develop":{"n":30,"errors":0,"err_sample":null,"p50":131.584,"p95":137.5034,"max":138.671,"mean":124.2994,"over_25s":0}},"50":{"main":{"n":150,"errors":0,"err_sample":null,"p50":51507.880000000005,"p95":52017.01945,"max":52102.152,"mean":51525.757893333335,"over_25s":150},"develop":{"n":150,"errors":0,"err_sample":null,"p50":778.018,"p95":917.64155,"max":922.832,"mean":774.5608133333334,"over_25s":0}}},"presence_1m":{"label":"Daftar Presensi \u00b7 1 bulan","1":{"main":{"n":20,"errors":0,"err_sample":null,"p50":1357.847,"p95":1516.691,"max":1576.37,"mean":1372.5027,"over_25s":0},"develop":{"n":20,"errors":0,"err_sample":null,"p50":16.807000000000002,"p95":20.32095,"max":21.631,"mean":17.1011,"over_25s":0}},"10":{"main":{"n":30,"errors":0,"err_sample":null,"p50":5205.029,"p95":5499.8109,"max":5683.695,"mean":5091.8133333333335,"over_25s":0},"develop":{"n":30,"errors":0,"err_sample":null,"p50":50.420500000000004,"p95":64.78025000000001,"max":65.743,"mean":47.42766666666667,"over_25s":0}},"50":{"main":{"n":150,"errors":0,"err_sample":null,"p50":27002.295,"p95":27429.8155,"max":27710.359,"mean":27050.655953333335,"over_25s":150},"develop":{"n":150,"errors":0,"err_sample":null,"p50":248.13,"p95":335.02385,"max":339.358,"mean":236.50538666666668,"over_25s":0}}},"presence_6m":{"label":"Daftar Presensi \u00b7 6 bulan","1":{"main":{"n":20,"errors":0,"err_sample":null,"p50":1824.3295,"p95":2067.3677000000002,"max":2517.016,"mean":1820.1853,"over_25s":0},"develop":{"n":20,"errors":0,"err_sample":null,"p50":16.0445,"p95":17.320150000000005,"max":23.517,"mean":16.404049999999998,"over_25s":0}},"10":{"main":{"n":30,"errors":0,"err_sample":null,"p50":7221.5535,"p95":7758.9811,"max":8213.716,"mean":6765.466733333334,"over_25s":0},"develop":{"n":30,"errors":0,"err_sample":null,"p50":51.569500000000005,"p95":56.872400000000006,"max":57.827,"mean":45.80963333333333,"over_25s":0}},"50":{"main":{"n":150,"errors":0,"err_sample":null,"p50":37355.512,"p95":39143.46465,"max":39204.848,"mean":37795.50490666667,"over_25s":150},"develop":{"n":150,"errors":0,"err_sample":null,"p50":269.4925,"p95":345.42275,"max":351.431,"mean":259.4503266666667,"over_25s":0}}},"presence_6m_partial":{"label":"Daftar Presensi \u00b7 6 bulan \u00b7 filter Sebagian","1":{"main":{"n":20,"errors":0,"err_sample":null,"p50":2686.2865,"p95":2912.69395,"max":2927.551,"mean":2727.48775,"over_25s":0},"develop":{"n":20,"errors":0,"err_sample":null,"p50":54.028999999999996,"p95":66.05720000000001,"max":73.034,"mean":55.56005,"over_25s":0}},"10":{"main":{"n":30,"errors":0,"err_sample":null,"p50":10391.123,"p95":10883.20375,"max":11308.009,"mean":10429.182733333333,"over_25s":0},"develop":{"n":30,"errors":0,"err_sample":null,"p50":161.445,"p95":179.8891,"max":180.393,"mean":157.80256666666668,"over_25s":0}},"50":{"main":{"n":150,"errors":0,"err_sample":null,"p50":56838.083,"p95":57473.69205,"max":57634.379,"mean":56899.48222,"over_25s":150},"develop":{"n":150,"errors":0,"err_sample":null,"p50":845.8145,"p95":925.48005,"max":932.126,"mean":821.8435066666667,"over_25s":0}}},"participants_1m":{"label":"Daftar Peserta \u00b7 1 bulan","1":{"main":{"n":20,"errors":0,"err_sample":null,"p50":750.639,"p95":905.1958,"max":926.966,"mean":781.03085,"over_25s":0},"develop":{"n":20,"errors":0,"err_sample":null,"p50":191.702,"p95":230.5286,"max":243.954,"mean":194.7475,"over_25s":0}},"10":{"main":{"n":30,"errors":0,"err_sample":null,"p50":2958.8875,"p95":3121.5617,"max":3300.617,"mean":2673.4430333333335,"over_25s":0},"develop":{"n":30,"errors":0,"err_sample":null,"p50":387.1305,"p95":672.77785,"max":684.698,"mean":391.97833333333335,"over_25s":0}},"50":{"main":{"n":150,"errors":0,"err_sample":null,"p50":15708.985,"p95":15954.957199999999,"max":15981.316,"mean":15630.3699,"over_25s":0},"develop":{"n":150,"errors":0,"err_sample":null,"p50":1798.3519999999999,"p95":3152.79625,"max":3392.811,"mean":1768.8556066666667,"over_25s":0}}},"participants_6m":{"label":"Daftar Peserta \u00b7 6 bulan","1":{"main":{"n":20,"errors":0,"err_sample":null,"p50":888.5029999999999,"p95":1052.97955,"max":1092.415,"mean":912.22595,"over_25s":0},"develop":{"n":20,"errors":0,"err_sample":null,"p50":546.647,"p95":644.8995500000001,"max":733.906,"mean":566.5606,"over_25s":0}},"10":{"main":{"n":30,"errors":0,"err_sample":null,"p50":3602.117,"p95":3675.168,"max":3745.906,"mean":3264.1930666666667,"over_25s":0},"develop":{"n":30,"errors":0,"err_sample":null,"p50":1328.0520000000001,"p95":2606.1839,"max":2633.849,"mean":1442.3795,"over_25s":0}},"50":{"main":{"n":150,"errors":0,"err_sample":null,"p50":17462.6135,"p95":17989.546749999998,"max":18026.804,"mean":17488.135713333333,"over_25s":0},"develop":{"n":150,"errors":6,"err_sample":"rpc error: code = Unavailable desc = participant query queue full","p50":5777.389999999999,"p95":10610.3772,"max":10684.875,"mean":5786.113368055556,"over_25s":0}}},"access_check":{"label":"Cek akses detail Penilaian (9 endpoint)","1":{"main":{"n":20,"errors":0,"err_sample":null,"p50":1874.4415,"p95":2045.4356,"max":2087.019,"mean":1884.71155,"over_25s":0},"develop":{"n":20,"errors":0,"err_sample":null,"p50":3.3875,"p95":4.368650000000001,"max":5.426,"mean":3.5413,"over_25s":0}},"10":{"main":{"n":30,"errors":0,"err_sample":null,"p50":7723.6095000000005,"p95":7914.1131000000005,"max":8109.79,"mean":7433.080466666666,"over_25s":0},"develop":{"n":30,"errors":0,"err_sample":null,"p50":28.708,"p95":30.2393,"max":30.465,"mean":23.917566666666666,"over_25s":0}},"50":{"main":{"n":150,"errors":0,"err_sample":null,"p50":39101.8245,"p95":39970.4731,"max":40114.146,"mean":39306.35399333333,"over_25s":150},"develop":{"n":150,"errors":0,"err_sample":null,"p50":114.37299999999999,"p95":183.16899999999998,"max":196.387,"mean":110.94996666666667,"over_25s":0}}}},"bff":{"E1_grading_1m":{"label":"Daftar Penilaian \u00b7 1 bulan","cold":{"main":{"n":5,"errors":0,"err_sample":null,"p50":1340.9740830000003,"p95":1478.3021000000003,"max":1489.4648750000003,"mean":1354.3494916000002,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":176},"total":201}},"develop":{"n":5,"errors":0,"err_sample":null,"p50":309.43470799999994,"p95":392.8523251999999,"max":393.6522919999999,"mean":321.6313416,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0},"total":121}}},"warm":{"main":{"n":5,"errors":0,"err_sample":null,"p50":1560.9623750000007,"p95":1685.9230329999987,"max":1711.3342079999984,"mean":1508.2842666000001,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":176},"total":201}},"develop":{"n":5,"errors":0,"err_sample":null,"p50":330.1549169999998,"p95":376.5994662000003,"max":380.07266600000025,"mean":322.47654160000013,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0},"total":121}}},"c10":{"main":{"n":20,"errors":0,"err_sample":null,"p50":5659.175062499999,"p95":6946.131872600003,"max":7164.9675,"mean":5889.3021853,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":176},"total":201}},"develop":{"n":20,"errors":0,"err_sample":null,"p50":1698.5661455,"p95":1832.2698964500007,"max":1909.563083,"mean":1633.4785209000001,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0},"total":121}}}},"E1_grading_6m":{"label":"Daftar Penilaian \u00b7 6 bulan","cold":{"main":{"n":5,"errors":0,"err_sample":null,"p50":2094.350583000001,"p95":2209.755041599999,"max":2221.1037499999975,"mean":2109.830675000002,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":211},"total":256}},"develop":{"n":5,"errors":0,"err_sample":null,"p50":316.9623329999993,"p95":369.92552500000005,"max":378.635375,"mean":321.5065832000001,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0},"total":246}}},"warm":{"main":{"n":5,"errors":0,"err_sample":null,"p50":1949.827291999995,"p95":2068.3552255999957,"max":2073.8748339999943,"mean":1966.351450199997,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":211},"total":256}},"develop":{"n":5,"errors":0,"err_sample":null,"p50":388.2899170000016,"p95":457.85283320000013,"max":471.53250000000037,"mean":376.9269080000004,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0},"total":246}}},"c10":{"main":{"n":20,"errors":0,"err_sample":null,"p50":7663.998187499999,"p95":8946.954106549996,"max":9345.698833,"mean":7650.22368335,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":211},"total":256}},"develop":{"n":20,"errors":0,"err_sample":null,"p50":1802.7994370000001,"p95":2020.29904165,"max":2057.4519579999996,"mean":1774.1705311500002,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0},"total":246}}}},"E2_presence_1m":{"label":"Daftar Presensi \u00b7 1 bulan","cold":{"main":{"n":5,"errors":0,"err_sample":null,"p50":1554.6960419999891,"p95":1694.5322327999918,"max":1726.8336659999904,"mean":1577.5394417999962,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":124,"complete":46,"not_filled":38,"partial":86},"total":170}},"develop":{"n":5,"errors":0,"err_sample":null,"p50":315.072666999999,"p95":492.68697519999944,"max":533.4002919999996,"mean":332.2419501999995,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0,"complete":0,"not_filled":0,"partial":0},"total":114}}},"warm":{"main":{"n":5,"errors":0,"err_sample":null,"p50":1470.573833000003,"p95":1535.3098751999994,"max":1539.9629169999969,"mean":1479.447841800004,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":124,"complete":46,"not_filled":38,"partial":86},"total":170}},"develop":{"n":5,"errors":0,"err_sample":null,"p50":263.97287500000033,"p95":314.5096664000015,"max":318.6923330000013,"mean":265.9220500000011,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0,"complete":0,"not_filled":0,"partial":0},"total":114}}},"c10":{"main":{"n":20,"errors":0,"err_sample":null,"p50":5452.640333499992,"p95":6090.35061730001,"max":6236.886375000012,"mean":5399.12890405,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":124,"complete":46,"not_filled":38,"partial":86},"total":170}},"develop":{"n":20,"errors":0,"err_sample":null,"p50":1125.398959,"p95":1332.9932208499997,"max":1375.4909170000005,"mean":1121.95295845,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0,"complete":0,"not_filled":0,"partial":0},"total":114}}}},"E2_presence_6m":{"label":"Daftar Presensi \u00b7 6 bulan","cold":{"main":{"n":5,"errors":0,"err_sample":null,"p50":1997.630916999995,"p95":2174.772733399996,"max":2216.4271249999956,"mean":2018.7696167999973,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":197,"complete":47,"not_filled":55,"partial":142},"total":244}},"develop":{"n":5,"errors":0,"err_sample":null,"p50":296.269290999998,"p95":336.4672006000014,"max":338.94958400000166,"mean":295.7467833999999,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0,"complete":0,"not_filled":0,"partial":0},"total":234}}},"warm":{"main":{"n":5,"errors":0,"err_sample":null,"p50":1925.629707999988,"p95":2133.8714749999954,"max":2144.7542499999913,"mean":1992.4753583999973,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":197,"complete":47,"not_filled":55,"partial":142},"total":244}},"develop":{"n":5,"errors":0,"err_sample":null,"p50":291.0437090000002,"p95":376.68838340000116,"max":384.52437500000156,"mean":291.09706680000045,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0,"complete":0,"not_filled":0,"partial":0},"total":234}}},"c10":{"main":{"n":20,"errors":0,"err_sample":null,"p50":7173.4469579999995,"p95":8015.528197600014,"max":8300.810624999996,"mean":7179.906749800002,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":197,"complete":47,"not_filled":55,"partial":142},"total":244}},"develop":{"n":20,"errors":0,"err_sample":null,"p50":1350.0327705000022,"p95":1506.5062020500009,"max":1507.6262910000012,"mean":1303.666654150001,"over_25s":0,"result":{"message":"OK","rows":12,"mini_dashboard":{"activities_to_complete":0,"complete":0,"not_filled":0,"partial":0},"total":234}}}},"E3_participants":{"label":"Daftar Peserta \u00b7 halaman 1 (12)","cold":{"main":{"n":5,"errors":0,"err_sample":null,"p50":1893.5854579999898,"p95":1924.2308578000006,"max":1928.1141660000003,"mean":1891.9347666000021,"over_25s":0,"result":{"message":"OK","total":2540,"rows":12}},"develop":{"n":5,"errors":0,"err_sample":null,"p50":991.1088329999984,"p95":1109.9158329999993,"max":1125.4770829999998,"mean":993.1249413999985,"over_25s":0,"result":{"message":"OK","total":2540,"rows":12}}},"warm":{"main":{"n":5,"errors":0,"err_sample":null,"p50":1966.7014999999992,"p95":2009.7612166000033,"max":2015.0275000000022,"mean":1939.8676249999994,"over_25s":0,"result":{"message":"OK","total":2540,"rows":12}},"develop":{"n":5,"errors":0,"err_sample":null,"p50":529.9342499999966,"p95":606.4322413999975,"max":614.1255829999964,"mean":532.693674799998,"over_25s":0,"result":{"message":"OK","total":2540,"rows":12}}},"c10":{"main":{"n":20,"errors":0,"err_sample":null,"p50":5492.0306665,"p95":5906.367603850004,"max":5912.573874999993,"mean":5310.9981708000005,"over_25s":0,"result":{"message":"OK","total":2540,"rows":12}},"develop":{"n":20,"errors":0,"err_sample":null,"p50":3811.729062999998,"p95":4332.379572950001,"max":4332.639834000005,"mean":3812.2347231,"over_25s":0,"result":{"message":"OK","total":2540,"rows":12}}}}},"parity":{"grading_1m":[{"fac":1,"main_total":209,"develop_total":130,"main_activities_to_complete":184},{"fac":2,"main_total":190,"develop_total":110,"main_activities_to_complete":165},{"fac":3,"main_total":190,"develop_total":110,"main_activities_to_complete":165},{"fac":4,"main_total":190,"develop_total":110,"main_activities_to_complete":165},{"fac":5,"main_total":190,"develop_total":110,"main_activities_to_complete":165},{"fac":6,"main_total":190,"develop_total":110,"main_activities_to_complete":165},{"fac":7,"main_total":190,"develop_total":110,"main_activities_to_complete":165},{"fac":8,"main_total":190,"develop_total":110,"main_activities_to_complete":165},{"fac":9,"main_total":190,"develop_total":110,"main_activities_to_complete":165},{"fac":10,"main_total":190,"develop_total":110,"main_activities_to_complete":165}],"grading_6m":[{"fac":1,"main_total":266,"develop_total":256,"main_activities_to_complete":221},{"fac":2,"main_total":245,"develop_total":235,"main_activities_to_complete":200},{"fac":3,"main_total":245,"develop_total":235,"main_activities_to_complete":200},{"fac":4,"main_total":245,"develop_total":235,"main_activities_to_complete":200},{"fac":5,"main_total":245,"develop_total":235,"main_activities_to_complete":200},{"fac":6,"main_total":245,"develop_total":235,"main_activities_to_complete":200},{"fac":7,"main_total":245,"develop_total":235,"main_activities_to_complete":200},{"fac":8,"main_total":245,"develop_total":235,"main_activities_to_complete":200},{"fac":9,"main_total":245,"develop_total":235,"main_activities_to_complete":200},{"fac":10,"main_total":245,"develop_total":235,"main_activities_to_complete":200}],"grading_6m_not_graded":[{"fac":1,"main_total":81,"develop_total":71,"main_activities_to_complete":81},{"fac":2,"main_total":70,"develop_total":60,"main_activities_to_complete":70},{"fac":3,"main_total":70,"develop_total":60,"main_activities_to_complete":70},{"fac":4,"main_total":70,"develop_total":60,"main_activities_to_complete":70},{"fac":5,"main_total":70,"develop_total":60,"main_activities_to_complete":70},{"fac":6,"main_total":70,"develop_total":60,"main_activities_to_complete":70},{"fac":7,"main_total":70,"develop_total":60,"main_activities_to_complete":70},{"fac":8,"main_total":70,"develop_total":60,"main_activities_to_complete":70},{"fac":9,"main_total":70,"develop_total":60,"main_activities_to_complete":70},{"fac":10,"main_total":70,"develop_total":60,"main_activities_to_complete":70}],"grading_6m_in_progress":[{"fac":1,"main_total":140,"develop_total":140,"main_activities_to_complete":140},{"fac":2,"main_total":130,"develop_total":130,"main_activities_to_complete":130},{"fac":3,"main_total":130,"develop_total":130,"main_activities_to_complete":130},{"fac":4,"main_total":130,"develop_total":130,"main_activities_to_complete":130},{"fac":5,"main_total":130,"develop_total":130,"main_activities_to_complete":130},{"fac":6,"main_total":130,"develop_total":130,"main_activities_to_complete":130},{"fac":7,"main_total":130,"develop_total":130,"main_activities_to_complete":130},{"fac":8,"main_total":130,"develop_total":130,"main_activities_to_complete":130},{"fac":9,"main_total":130,"develop_total":130,"main_activities_to_complete":130},{"fac":10,"main_total":130,"develop_total":130,"main_activities_to_complete":130}],"presence_1m":[{"fac":1,"main_total":174,"develop_total":122,"main_summary":"todo=128 complete=46 partial=87 not_filled=41"},{"fac":2,"main_total":165,"develop_total":105,"main_summary":"todo=120 complete=45 partial=84 not_filled=36"},{"fac":3,"main_total":165,"develop_total":105,"main_summary":"todo=120 complete=45 partial=84 not_filled=36"},{"fac":4,"main_total":165,"develop_total":105,"main_summary":"todo=120 complete=45 partial=85 not_filled=35"},{"fac":5,"main_total":165,"develop_total":105,"main_summary":"todo=120 complete=45 partial=84 not_filled=36"},{"fac":6,"main_total":165,"develop_total":105,"main_summary":"todo=120 complete=45 partial=85 not_filled=35"},{"fac":7,"main_total":165,"develop_total":105,"main_summary":"todo=120 complete=45 partial=84 not_filled=36"},{"fac":8,"main_total":165,"develop_total":105,"main_summary":"todo=120 complete=45 partial=84 not_filled=36"},{"fac":9,"main_total":165,"develop_total":105,"main_summary":"todo=120 complete=45 partial=85 not_filled=35"},{"fac":10,"main_total":165,"develop_total":105,"main_summary":"todo=120 complete=45 partial=84 not_filled=36"}],"presence_6m":[{"fac":1,"main_total":252,"develop_total":242,"main_summary":"todo=204 complete=48 partial=145 not_filled=59"},{"fac":2,"main_total":235,"develop_total":225,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"},{"fac":3,"main_total":235,"develop_total":225,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"},{"fac":4,"main_total":235,"develop_total":225,"main_summary":"todo=190 complete=45 partial=140 not_filled=50"},{"fac":5,"main_total":235,"develop_total":225,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"},{"fac":6,"main_total":235,"develop_total":225,"main_summary":"todo=190 complete=45 partial=140 not_filled=50"},{"fac":7,"main_total":235,"develop_total":225,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"},{"fac":8,"main_total":235,"develop_total":225,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"},{"fac":9,"main_total":235,"develop_total":225,"main_summary":"todo=190 complete=45 partial=140 not_filled=50"},{"fac":10,"main_total":235,"develop_total":225,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"}],"presence_6m_partial":[{"fac":1,"main_total":145,"develop_total":145,"main_summary":"todo=204 complete=48 partial=145 not_filled=59"},{"fac":2,"main_total":139,"develop_total":139,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"},{"fac":3,"main_total":139,"develop_total":139,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"},{"fac":4,"main_total":140,"develop_total":140,"main_summary":"todo=190 complete=45 partial=140 not_filled=50"},{"fac":5,"main_total":139,"develop_total":139,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"},{"fac":6,"main_total":140,"develop_total":140,"main_summary":"todo=190 complete=45 partial=140 not_filled=50"},{"fac":7,"main_total":139,"develop_total":139,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"},{"fac":8,"main_total":139,"develop_total":139,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"},{"fac":9,"main_total":140,"develop_total":140,"main_summary":"todo=190 complete=45 partial=140 not_filled=50"},{"fac":10,"main_total":139,"develop_total":139,"main_summary":"todo=190 complete=45 partial=139 not_filled=51"}],"participants_1m":[{"fac":1,"main_total":2793,"develop_total":2796,"tag_checked":12,"tag_same":11},{"fac":2,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":3,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":4,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":5,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":6,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":7,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":8,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":9,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":10,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12}],"participants_6m":[{"fac":1,"main_total":2796,"develop_total":2796,"tag_checked":12,"tag_same":12},{"fac":2,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":3,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":4,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":5,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":6,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":7,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":8,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":9,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12},{"fac":10,"main_total":2500,"develop_total":2500,"tag_checked":12,"tag_same":12}],"access_check":[{"fac":1,"main_total":null,"develop_total":null,"main_allowed":true,"develop_allowed":true,"main_rows":271,"develop_rows":1},{"fac":2,"main_total":null,"develop_total":null,"main_allowed":true,"develop_allowed":true,"main_rows":250,"develop_rows":1},{"fac":3,"main_total":null,"develop_total":null,"main_allowed":true,"develop_allowed":true,"main_rows":250,"develop_rows":1},{"fac":4,"main_total":null,"develop_total":null,"main_allowed":true,"develop_allowed":true,"main_rows":250,"develop_rows":1},{"fac":5,"main_total":null,"develop_total":null,"main_allowed":true,"develop_allowed":true,"main_rows":250,"develop_rows":1},{"fac":6,"main_total":null,"develop_total":null,"main_allowed":true,"develop_allowed":true,"main_rows":250,"develop_rows":1},{"fac":7,"main_total":null,"develop_total":null,"main_allowed":true,"develop_allowed":true,"main_rows":250,"develop_rows":1},{"fac":8,"main_total":null,"develop_total":null,"main_allowed":true,"develop_allowed":true,"main_rows":250,"develop_rows":1},{"fac":9,"main_total":null,"develop_total":null,"main_allowed":true,"develop_allowed":true,"main_rows":250,"develop_rows":1},{"fac":10,"main_total":null,"develop_total":null,"main_allowed":true,"develop_allowed":true,"main_rows":250,"develop_rows":1}]}};
+const ORDER = ["grading_1m","grading_6m","grading_6m_not_graded","grading_6m_in_progress","presence_1m","presence_6m","presence_6m_partial","participants_1m","participants_6m","access_check"];
+const SHORT = {
+  grading_1m: "Penilaian · 1 bulan", grading_6m: "Penilaian · 6 bulan",
+  grading_6m_not_graded: "Penilaian · 6 bln · Belum Dinilai", grading_6m_in_progress: "Penilaian · 6 bln · Sedang Dinilai",
+  presence_1m: "Presensi · 1 bulan", presence_6m: "Presensi · 6 bulan", presence_6m_partial: "Presensi · 6 bln · Sebagian",
+  participants_1m: "Peserta · 1 bulan", participants_6m: "Peserta · 6 bulan", access_check: "Cek akses detail Penilaian"
+};
+const fmtMs = ms => ms == null ? "–" : ms >= 1000 ? (ms/1000).toLocaleString("id-ID",{maximumFractionDigits: ms >= 10000 ? 1 : 2}) + " dtk" : Math.round(ms).toLocaleString("id-ID") + " ms";
+const fmtN = ms => ms == null ? "–" : Math.round(ms).toLocaleString("id-ID");
+const fmtX = (a,b) => (a && b) ? (a/b >= 10 ? Math.round(a/b) : (a/b).toLocaleString("id-ID",{maximumFractionDigits:1})) + "×" : "–";
+
+// verdict strip
+(function(){
+  const picks = [["grading_6m","Daftar Penilaian · 6 bulan"],["presence_6m","Daftar Presensi · 6 bulan"],["participants_6m","Daftar Peserta · 6 bulan"],["access_check","Cek akses detail Penilaian"]];
+  document.getElementById("verdict").innerHTML = picks.map(([k,label]) => {
+    const m = DATA.grpc[k]["50"].main, d = DATA.grpc[k]["50"].develop;
+    const rto = m.over_25s ? `<span class="pill bad">${m.over_25s}/${m.n} sebelum &gt; 25 dtk</span>` : "";
+    const shed = d.errors ? `<span class="pill warn">${d.errors}/${d.n} ditolak antrean</span>` : `<span class="pill good">0 gagal sesudah</span>`;
+    return `<div><span class="what">${label}</span><span class="nums"><span class="from">${fmtMs(m.p50)}</span><span class="to">${fmtMs(d.p50)}</span><span class="x">${fmtX(m.p50,d.p50)} lebih cepat</span></span><span class="chips">${rto}${shed}</span></div>`;
+  }).join("");
+})();
+
+// dumbbell chart, log scale
+const tip = document.getElementById("tip");
+function drawChart(c){
+  const W = 960, rowH = 34, top = 34, left = 250, right = 120, H = top + ORDER.length*rowH + 34;
+  const lo = 1, hi = 100000;
+  const x = v => left + (Math.log10(Math.max(v,lo)) - Math.log10(lo)) / (Math.log10(hi) - Math.log10(lo)) * (W - left - right);
+  const ticks = [1,10,100,1000,10000,100000];
+  const tickLbl = v => v >= 1000 ? (v/1000)+" dtk" : v+" ms";
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+  ticks.forEach(t => { s += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${top-10}" y2="${H-26}"/><text x="${x(t)}" y="${H-8}" text-anchor="middle">${tickLbl(t)}</text>`; });
+  s += `<line class="limit" x1="${x(25000)}" x2="${x(25000)}" y1="${top-18}" y2="${H-26}"/><text class="limit-t" x="${x(25000)+4}" y="${top-20}">batas fetch BFF 25 dtk</text>`;
+  ORDER.forEach((k,i) => {
+    const v = DATA.grpc[k][String(c)]; if (!v) return;
+    const m = v.main, d = v.develop, y = top + i*rowH + rowH/2;
+    s += `<g class="row" data-k="${k}">`;
+    s += `<rect class="hitbg" x="0" y="${y-rowH/2}" width="${W}" height="${rowH}" rx="4"/>`;
+    s += `<text class="lbl" x="0" y="${y+4}">${SHORT[k]}</text>`;
+    s += `<line class="conn" x1="${x(d.p50)}" x2="${x(m.p50)}" y1="${y}" y2="${y}"/>`;
+    s += `<circle class="m-after" cx="${x(d.p50)}" cy="${y}" r="6"/><circle class="m-before" cx="${x(m.p50)}" cy="${y}" r="6"/>`;
+    s += `<text class="val" x="${x(d.p50)-10}" y="${y+4}" text-anchor="end">${fmtMs(d.p50)}</text>`;
+    s += `<text class="val" x="${x(m.p50)+10}" y="${y+4}">${fmtMs(m.p50)}</text>`;
+    s += `<text class="fac" x="${W}" y="${y+4}" text-anchor="end">${fmtX(m.p50,d.p50)}</text>`;
+    s += `<rect class="hit" x="0" y="${y-rowH/2}" width="${W}" height="${rowH}"/></g>`;
+  });
+  s += `</svg>`;
+  const el = document.getElementById("chart"); el.innerHTML = s;
+  el.querySelectorAll(".row").forEach(g => {
+    const k = g.dataset.k, v = DATA.grpc[k][String(c)];
+    g.addEventListener("mousemove", e => {
+      const m = v.main, d = v.develop;
+      tip.innerHTML = `<b>${DATA.grpc[k].label}</b><br>${c} request bersamaan · ${m.n} sampel<br>Sebelum: p50 ${fmtMs(m.p50)} · p95 ${fmtMs(m.p95)} · maks ${fmtMs(m.max)}${m.errors?` · ${m.errors} gagal`:""}<br>Sesudah: p50 ${fmtMs(d.p50)} · p95 ${fmtMs(d.p95)} · maks ${fmtMs(d.max)}${d.errors?` · ${d.errors} ditolak antrean`:""}`;
+      tip.hidden = false;
+      const tx = Math.min(e.clientX + 14, window.innerWidth - 296);
+      tip.style.left = tx + "px"; tip.style.top = (e.clientY + 14) + "px";
+    });
+    g.addEventListener("mouseleave", () => { tip.hidden = true; });
+  });
+}
+const seg = document.getElementById("conc");
+seg.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  seg.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  drawChart(+b.dataset.c);
+});
+drawChart(50);
+
+// full gRPC table
+(function(){
+  let h = `<thead><tr class="top"><th></th><th></th><th colspan="2" class="before">Sebelum (main)</th><th colspan="2" class="after">Sesudah (develop)</th><th colspan="3"></th></tr>
+    <tr><th>Skenario</th><th>Request bersamaan</th>
+    <th>Median<span class="sub">p50</span></th><th>95% selesai dalam<span class="sub">p95</span></th>
+    <th>Median<span class="sub">p50</span></th><th>95% selesai dalam<span class="sub">p95</span></th>
+    <th>Lebih cepat<span class="sub">median sebelum ÷ sesudah</span></th><th>Lewat 25 dtk<span class="sub">sebelum, dari total request</span></th><th>Ditolak antrean<span class="sub">sesudah, dari total request</span></th></tr></thead><tbody>`;
+  ORDER.forEach(k => {
+    h += `<tr><td class="grp" colspan="9">${DATA.grpc[k].label}</td></tr>`;
+    ["1","10","50"].forEach(c => {
+      const m = DATA.grpc[k][c].main, d = DATA.grpc[k][c].develop;
+      const rto = m.over_25s ? `<span class="pill bad">${m.over_25s} dari ${m.n}</span>` : `<span class="muted">0 dari ${m.n}</span>`;
+      const er = d.errors ? `<span class="pill warn">${d.errors} dari ${d.n}</span>` : `<span class="muted">0 dari ${d.n}</span>`;
+      h += `<tr><td>${SHORT[k]}</td><td class="num">${c}</td><td class="num">${fmtMs(m.p50)}</td><td class="num">${fmtMs(m.p95)}</td><td class="num">${fmtMs(d.p50)}</td><td class="num">${fmtMs(d.p95)}</td><td class="num">${fmtX(m.p50,d.p50)}</td><td>${rto}</td><td>${er}</td></tr>`;
+    });
+  });
+  document.getElementById("tbl-grpc").innerHTML = h + "</tbody>";
+})();
+
+// BFF table
+(function(){
+  const EP = ["E1_grading_1m","E1_grading_6m","E2_presence_1m","E2_presence_6m","E3_participants"];
+  const MODE = {cold:"Cache kosong", warm:"Cache terisi", c10:"10 tab sekaligus"};
+  const SAMPLES = {cold:"5 request", warm:"5 request", c10:"20 request"};
+  let h = `<thead><tr class="top"><th></th><th></th><th colspan="2" class="before">Sebelum (main)</th><th colspan="2" class="after">Sesudah (develop)</th><th colspan="2"></th></tr>
+    <tr><th>Halaman</th><th>Kondisi</th>
+    <th>Median<span class="sub">p50</span></th><th>Paling lambat<span class="sub">maks</span></th>
+    <th>Median<span class="sub">p50</span></th><th>Paling lambat<span class="sub">maks</span></th>
+    <th>Lebih cepat<span class="sub">median sebelum ÷ sesudah</span></th><th>Jumlah di daftar<span class="sub">sebelum → sesudah</span></th></tr></thead><tbody>`;
+  EP.forEach(ep => {
+    const v = DATA.bff[ep];
+    const unit = ep.startsWith("E3") ? "peserta" : "aktivitas";
+    h += `<tr><td class="grp" colspan="8">${v.label}</td></tr>`;
+    ["cold","warm","c10"].forEach(mode => {
+      const m = v[mode].main, d = v[mode].develop;
+      const tm = m.result && m.result.total, td = d.result && d.result.total;
+      const n = x => x == null ? "–" : Number(x).toLocaleString("id-ID");
+      h += `<tr><td>${v.label}</td><td>${MODE[mode]}<span class="sub">${SAMPLES[mode]}</span></td><td class="num">${fmtMs(m.p50)}</td><td class="num">${fmtMs(m.max)}</td><td class="num">${fmtMs(d.p50)}</td><td class="num">${fmtMs(d.max)}</td><td class="num">${fmtX(m.p50,d.p50)}</td><td class="num">${n(tm)} → ${n(td)} ${unit}</td></tr>`;
+    });
+  });
+  document.getElementById("tbl-bff").innerHTML = h + "</tbody>";
+})();
+
+// parity table (facilitator #2 representative, #1 shown for the env caveat)
+(function(){
+  let h = `<thead><tr><th>Skenario</th><th>Fasilitator</th>
+    <th>Jumlah di daftar<span class="sub">sebelum</span></th><th>Jumlah di daftar<span class="sub">sesudah</span></th><th>Selisih<span class="sub">sesudah − sebelum</span></th>
+    <th>Kotak info di versi sebelum<span class="sub">versi sesudah selalu 0</span></th><th>Tag peserta sama<span class="sub">dari 12 peserta halaman 1</span></th></tr></thead><tbody>`;
+  const n = x => (x ?? 0).toLocaleString("id-ID");
+  ORDER.forEach(k => {
+    if (k === "access_check") return;
+    const unit = k.startsWith("participants") ? "peserta" : "aktivitas";
+    (DATA.parity[k] || []).filter(r => r.fac === 1 || r.fac === 2).forEach(r => {
+      let info = "–";
+      if (r.main_activities_to_complete != null) info = `Aktivitas perlu diselesaikan: ${n(r.main_activities_to_complete)}`;
+      else if (r.main_summary) {
+        const g = Object.fromEntries(r.main_summary.split(" ").map(p => p.split("=")));
+        info = `Perlu diselesaikan ${n(+g.todo)} · Lengkap ${n(+g.complete)} · Sebagian ${n(+g.partial)} · Belum diisi ${n(+g.not_filled)}`;
+      }
+      const tag = r.tag_checked ? (r.tag_same === r.tag_checked ? `<span class="pill good">${r.tag_same} dari ${r.tag_checked}</span>` : `<span class="pill warn">${r.tag_same} dari ${r.tag_checked}</span>`) : `<span class="muted">tidak berlaku</span>`;
+      const dlt = (r.develop_total ?? 0) - (r.main_total ?? 0);
+      const diff = dlt === 0 ? `<span class="muted">sama</span>` : `${dlt > 0 ? "+" : "−"}${n(Math.abs(dlt))} ${unit}<span class="sub">${dlt < 0 ? "tidak tampil lagi di versi sesudah" : "baru tampil di versi sesudah"}</span>`;
+      h += `<tr><td>${SHORT[k]}</td><td class="num">#${r.fac}<span class="sub">${r.fac === 1 ? "akun dev + data dev lama" : "data bench saja"}</span></td><td class="num">${n(r.main_total)} ${unit}</td><td class="num">${n(r.develop_total)} ${unit}</td><td class="num">${diff}</td><td class="small" style="white-space:normal;text-align:left">${info}</td><td>${tag}</td></tr>`;
+    });
+  });
+  const ac = (DATA.parity.access_check || []);
+  h += `<tr><td>Cek akses detail Penilaian</td><td class="num">#1–#10</td><td colspan="5" class="small" style="text-align:left;white-space:normal">Semua fasilitator diizinkan membuka aktivitasnya sendiri di kedua versi. Versi sebelum mengambil ${ac[1] ? n(ac[1].main_rows) : "–"} aktivitas lalu mencari ID-nya, versi sesudah hanya mengambil 1.</td></tr>`;
+  document.getElementById("tbl-parity").innerHTML = h + "</tbody>";
+})();
+</script>
