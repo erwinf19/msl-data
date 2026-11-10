@@ -333,6 +333,32 @@
       "borrowedPlayerIdsB": [],
       "locked": true,
       "lockedAt": "2026-11-05T05:19:43.334Z"
+    },
+    {
+      "id": "m15",
+      "teamA": "Sadewa",
+      "teamB": "Samudera",
+      "playerIdsA": [
+        0,
+        17,
+        25,
+        39,
+        44
+      ],
+      "playerIdsB": [
+        31,
+        30,
+        38,
+        5,
+        22
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [
+        5,
+        22
+      ],
+      "locked": true,
+      "lockedAt": "2026-11-10T10:59:11.581Z"
     }
   ]
 }
