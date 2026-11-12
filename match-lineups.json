@@ -384,6 +384,29 @@
       ],
       "locked": true,
       "lockedAt": "2026-11-11T09:47:49.406Z"
+    },
+    {
+      "id": "m17",
+      "teamA": "Airlangga",
+      "teamB": "Padjadjaran",
+      "playerIdsA": [
+        1,
+        13,
+        16,
+        34,
+        33
+      ],
+      "playerIdsB": [
+        6,
+        9,
+        18,
+        27,
+        40
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [],
+      "locked": true,
+      "lockedAt": "2026-11-12T05:22:46.403Z"
     }
   ]
 }
