@@ -435,6 +435,29 @@
       ],
       "locked": true,
       "lockedAt": "2026-11-17T09:49:43.146Z"
+    },
+    {
+      "id": "m19",
+      "teamA": "Warmadewa",
+      "teamB": "Kalingga",
+      "playerIdsA": [
+        4,
+        12,
+        22,
+        32,
+        35
+      ],
+      "playerIdsB": [
+        2,
+        23,
+        24,
+        37,
+        45
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [],
+      "locked": true,
+      "lockedAt": "2026-11-18T09:51:09.828Z"
     }
   ]
 }
