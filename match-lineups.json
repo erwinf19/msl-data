@@ -458,6 +458,29 @@
       "borrowedPlayerIdsB": [],
       "locked": true,
       "lockedAt": "2026-11-18T09:51:09.828Z"
+    },
+      {
+      "id": "m20",
+      "teamA": "Sadewa",
+      "teamB": "Gajah Mada",
+      "playerIdsA": [
+        0,
+        11,
+        17,
+        25,
+        39
+      ],
+      "playerIdsB": [
+        3,
+        8,
+        19,
+        26,
+        41
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [],
+      "locked": true,
+      "lockedAt": "2026-11-24T10:00:35.670Z"
     }
   ]
 }
