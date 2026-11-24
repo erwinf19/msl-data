@@ -159,7 +159,7 @@
       "date": "2026-11-24",
       "teamA": "Sadewa",
       "teamB": "Gajah Mada",
-      "score": null
+      "score": [1,2]
     },
     {
       "id": "m21",
