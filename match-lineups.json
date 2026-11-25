@@ -481,6 +481,34 @@
       "borrowedPlayerIdsB": [],
       "locked": true,
       "lockedAt": "2026-11-24T10:00:35.670Z"
+    },
+    {
+      "id": "m21",
+      "teamA": "Airlangga",
+      "teamB": "Samudera",
+      "playerIdsA": [
+        1,
+        13,
+        16,
+        34,
+        44
+      ],
+      "playerIdsB": [
+        7,
+        30,
+        38,
+        42,
+        41
+      ],
+      "borrowedPlayerIdsA": [
+        44
+      ],
+      "borrowedPlayerIdsB": [
+        42,
+        41
+      ],
+      "locked": true,
+      "lockedAt": "2026-11-25T09:49:18.203Z"
     }
   ]
 }
