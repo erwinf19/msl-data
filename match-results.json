@@ -167,7 +167,7 @@
       "date": "2026-11-25",
       "teamA": "Airlangga",
       "teamB": "Samudera",
-      "score": null
+      "score": [0,2]
     },
     {
       "id": "m22",
