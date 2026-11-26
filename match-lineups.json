@@ -509,6 +509,29 @@
       ],
       "locked": true,
       "lockedAt": "2026-11-25T09:49:18.203Z"
+    },
+        {
+      "id": "m22",
+      "teamA": "Padjadjaran",
+      "teamB": "Kalingga",
+      "playerIdsA": [
+        6,
+        9,
+        18,
+        27,
+        40
+      ],
+      "playerIdsB": [
+        2,
+        23,
+        24,
+        37,
+        45
+      ],
+      "borrowedPlayerIdsA": [],
+      "borrowedPlayerIdsB": [],
+      "locked": true,
+      "lockedAt": "2026-11-26T09:49:10.707Z"
     }
   ]
 }
